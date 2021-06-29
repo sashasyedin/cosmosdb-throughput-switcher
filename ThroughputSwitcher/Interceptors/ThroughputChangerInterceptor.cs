@@ -23,11 +23,12 @@ namespace ThroughputSwitcher.Interceptors
             _cosmosDbClient = new CosmosClient(_cosmosDbOptions.Uri, _cosmosDbOptions.PrimaryKey, new CosmosClientOptions
             {
                 ConnectionMode = ConnectionMode.Direct,
-                SerializerOptions = new CosmosSerializationOptions { PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase }
+                SerializerOptions = new CosmosSerializationOptions {PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase}
             });
         }
 
-        protected override async Task InterceptAsync(IInvocation invocation, IInvocationProceedInfo proceedInfo, Func<IInvocation, IInvocationProceedInfo, Task> proceed)
+        protected override async Task InterceptAsync(IInvocation invocation, IInvocationProceedInfo proceedInfo,
+            Func<IInvocation, IInvocationProceedInfo, Task> proceed)
         {
             var attr = invocation.MethodInvocationTarget.GetCustomAttribute<ChangeThroughputAttribute>();
 
@@ -74,7 +75,8 @@ namespace ThroughputSwitcher.Interceptors
             }
         }
 
-        protected override async Task<TResult> InterceptAsync<TResult>(IInvocation invocation, IInvocationProceedInfo proceedInfo, Func<IInvocation, IInvocationProceedInfo, Task<TResult>> proceed)
+        protected override async Task<TResult> InterceptAsync<TResult>(IInvocation invocation, IInvocationProceedInfo proceedInfo,
+            Func<IInvocation, IInvocationProceedInfo, Task<TResult>> proceed)
         {
             var attr = invocation.MethodInvocationTarget.GetCustomAttribute<ChangeThroughputAttribute>();
 
@@ -119,7 +121,7 @@ namespace ThroughputSwitcher.Interceptors
             }
         }
 
-        private async Task ChangeThroughput(Container container, int newThroughput)
+        private static async Task ChangeThroughput(Container container, int newThroughput)
         {
             var changeThroughputRetryPolicy = Policy<ThroughputResponse>
                 .Handle<Exception>()
